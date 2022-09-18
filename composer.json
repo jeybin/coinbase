@@ -8,6 +8,13 @@
         "guzzlehttp/guzzle": "^7.5"
     },
     "license": "MIT",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jeybin\\Coinbase\\Providers\\CoinbaseServiceProvider"
+            ]
+        }
+    },
     "autoload": {
         "psr-4": {
             "Jeybin\\Coinbase\\": "src/"

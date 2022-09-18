@@ -9,8 +9,21 @@ class CoinBaseClient{
     
     
     private const BASE_URL    = 'https://api.commerce.coinbase.com/{data}';
-    private const API_VERSION = '{{coinbase-api-version}}';
-    private const API_KEY     = '{{coinbase-api-key}}';
+    private static $API_VERSION;
+    private static $API_KEY    ;
+
+    public function __construct(){
+        self::init();
+    }
+
+    private static function init(){
+        try {
+            SELF::$API_VERSION = config('coinbase.API_VERSION');
+            SELF::$API_KEY     = config('coinbase.API_KEY');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 
     private static function COINBASE_API($type=''):string{
         try {
@@ -25,8 +38,8 @@ class CoinBaseClient{
         try {
             $headers = ['Accept'       => 'application/json',
                         'Content-Type' => 'application/json',
-                        'X-CC-Version' => SELF::API_VERSION,
-                        'X-CC-Api-Key' => SELF::API_KEY];
+                        'X-CC-Version' => SELF::$API_VERSION,
+                        'X-CC-Api-Key' => SELF::$API_KEY];
             
             return array_merge($headers,$additional_headers);
 
