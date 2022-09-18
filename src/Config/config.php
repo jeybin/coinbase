@@ -9,5 +9,10 @@ return [
         */
 
         'title' => 'iBookHolidays',
-    ]
+    ],
+    'providers' => [
+        // Other Service Providers
+    
+        Jeybin\Coinbase\Providers\CoinbaseServiceProvider::class,
+    ],
 ];

@@ -2,8 +2,10 @@
 
 namespace Jeybin\Coinbase\Providers;
 
+use Jeybin\Coinbase\CoinbaseClass;
 use Illuminate\Support\ServiceProvider;
 use Jeybin\Coinbase\Console\InstallCoinbasePackage;
+use Jeybin\Coinbase\Controllers\CoinbaseChargesController;
 
 class CoinbaseServiceProvider extends ServiceProvider
 {
@@ -30,7 +32,12 @@ class CoinbaseServiceProvider extends ServiceProvider
             $this->commands([
                 InstallCoinbasePackage::class,
             ]);
-          }
+        }
+
+
+        $this->app->bind('coinbase', function($app) {
+            return new CoinbaseChargesController();
+        });
 
     }
 }

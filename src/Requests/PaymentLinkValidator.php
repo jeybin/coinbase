@@ -1,6 +1,6 @@
 <?php
 
-namespace Jeybin\Coinbase\Requests\Coinbase;
+namespace Jeybin\Coinbase\Requests;
 
 use Jeybin\Coinbase\Helpers\Helpers;
 use Illuminate\Foundation\Http\FormRequest;

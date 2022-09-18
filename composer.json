@@ -12,7 +12,10 @@
         "laravel": {
             "providers": [
                 "Jeybin\\Coinbase\\Providers\\CoinbaseServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Coinbase": "Jeybin\\Coinbase\\Facades\\CoinbaseFacades"
+            }
         }
     },
     "autoload": {
