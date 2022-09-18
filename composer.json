@@ -1,8 +1,13 @@
 {
     "name": "jeybin/coinbase",
+    "description": "The helper package for coinbase cloud commerce",
     "require": {
         "guzzlehttp/guzzle": "^7.5"
     },
+    "require-dev": {
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "Jeybin\\Coinbase\\": "src/"
@@ -11,7 +16,7 @@
     "authors": [
         {
             "name": "jeybin",
-            "email": "jeybin.george@ibookholiday.com"
+            "email": "jeybin@gmail.com"
         }
     ]
 }
