@@ -1,0 +1,17 @@
+{
+    "name": "jeybin/coinbase",
+    "require": {
+        "guzzlehttp/guzzle": "^7.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jeybin\\Coinbase\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "jeybin",
+            "email": "jeybin.george@ibookholiday.com"
+        }
+    ]
+}
