@@ -8,6 +8,9 @@ Class Helpers {
 
 
     public static function response($responseCode,$message=''){
+        if(!empty($message)){
+            return ['code'=>$responseCode,'message'=>$message,'error'=>(($responseCode !== 200 && $responseCode !== 201) ? true : false)];
+        }
         switch ($responseCode) {
             case 200:
                 $status = ['code'=>200, 'message'=>($message)?$message:'SUCCESS', 'error'=>FALSE];

@@ -4,7 +4,9 @@ namespace Jeybin\Coinbase\Controllers;
 
 use Throwable;
 use Illuminate\Http\Request;
-use Jeybin\Coinbase\Requests\PaymentLinkValidator;
+// use Jeybin\Coinbase\Requests\PaymentLinkValidator;
+use Jeybin\Coinbase\Helpers\Helpers;
+use Illuminate\Support\Facades\Validator;
 use Jeybin\Coinbase\Controllers\Client\CoinBaseClient;
 use Jeybin\Coinbase\Controllers\Client\CoinBaseChargeClient;
 
@@ -16,31 +18,30 @@ class CoinbaseChargesController{
      * Once a charge is created a customer must broadcast a payment to 
      * the blockchain before the charge expires.
      */
-    public function paymentLink(PaymentLinkValidator $request){
+    public function createCharge(Request $request){
         try {
+            $rules = [ 'name'          => 'required|string',
+                       'description'   => 'required|string',
+                       'customer_id'   => 'required',
+                       'customer_name' => 'required',
+                       'redirect_url'  => 'required|string',
+                       'cancel_url'    => 'required|string',
+                       'pricing_type'  => 'required|string|in:fixed_price,no_price',
+                       'currency'      => 'required_if:pricing_type,fixed_price|min:3|max:3',
+                       'amount'        => 'required_if:pricing_type,fixed_price|numeric|gte:0'];
+            
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return Helpers::throwResponse($validator->errors()->first(),null,422);
+            }
+
             /**
              * Validated request array
              */
-            $requestArr  = $request->validated();
-
+            $requestArr  = $validator->validated();
             $pricing_type = (empty($requestArr['pricing_type']) || !in_array($requestArr['pricing_type'],['fixed_price','no_price'])) ? 'fixed_price' : $requestArr['pricing_type'];
 
             if($pricing_type == 'fixed_price'){
-                /**
-                 * In the no_price price-type no need to mention the amount
-                 * for the fixed price we need to pass the amount
-                 */
-                if(empty($requestArr['currency'])){
-                    return CoinBaseController::validationMessage(422,'Currency is required');
-                }
-                if(empty($requestArr['amount'])){
-                    return CoinBaseController::validationMessage(422,'Amount is required');
-                }else {
-                    if($requestArr['amount'] <= 0){
-                        return CoinBaseController::validationMessage(422,'Amount must be greater than 0');
-                    }
-                }
-
                 /**
                  * 1% fees applicable for all transactions with coinbase
                  * Adding that 1% to the amount;
@@ -53,15 +54,15 @@ class CoinbaseChargesController{
             
 
             
-            $chargerequestArr['name']         = $requestArr['name']; 
-            $chargerequestArr['description']  = $requestArr['description']; 
-            $chargerequestArr['pricing_type'] = $pricing_type; 
-            $chargerequestArr['metadata']['customer_id'] = $requestArr['customer_id'];
-            $chargerequestArr['metadata']['customer_name'] = $requestArr['customer_name'];
-            $chargerequestArr['redirect_url'] = $requestArr['redirect_url'];
-            $chargerequestArr['cancel_url'] = $requestArr['cancel_url'];
+            $chargerequestArr['name']                       = $requestArr['name']; 
+            $chargerequestArr['description']                = $requestArr['description']; 
+            $chargerequestArr['pricing_type']               = $pricing_type; 
+            $chargerequestArr['metadata']['customer_id']    = $requestArr['customer_id'];
+            $chargerequestArr['metadata']['customer_name']  = $requestArr['customer_name'];
+            $chargerequestArr['redirect_url']               = $requestArr['redirect_url'];
+            $chargerequestArr['cancel_url']                 = $requestArr['cancel_url'];
 
-            return CoinBaseController::FormatResponse(CoinBaseChargeClient::CreateCharge($chargeRequest));
+            return CoinBaseController::FormatResponse(CoinBaseChargeClient::CreateCharge($chargerequestArr));
 
         } catch (\Throwable $th) {
             throw $th;
@@ -99,17 +100,9 @@ class CoinbaseChargesController{
 
 
 
-    public static function CHARGES_LIST(){
+    public static function chargeList(){
         try {
             return CoinBaseController::FormatResponse(CoinBaseChargeClient::ChargesList());
-        } catch (Throwable $th) {
-            throw $th;
-        }
-    }
-
-    public function GENERATE_PAYMENT_LINK(array $request){
-        try {
-
         } catch (Throwable $th) {
             throw $th;
         }

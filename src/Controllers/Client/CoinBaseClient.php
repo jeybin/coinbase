@@ -9,21 +9,6 @@ class CoinBaseClient{
     
     
     private const BASE_URL    = 'https://api.commerce.coinbase.com/{data}';
-    private static $API_VERSION;
-    private static $API_KEY    ;
-
-    public function __construct(){
-        self::init();
-    }
-
-    private static function init(){
-        try {
-            SELF::$API_VERSION = config('coinbase.API_VERSION');
-            SELF::$API_KEY     = config('coinbase.API_KEY');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
 
     private static function COINBASE_API($type=''):string{
         try {
@@ -34,15 +19,14 @@ class CoinBaseClient{
     }
 
 
-    private static function GET_HEADERS(array $additional_headers=[]):array{
+    private static function GET_HEADERS(array $additional_headers=[]){
         try {
             $headers = ['Accept'       => 'application/json',
                         'Content-Type' => 'application/json',
-                        'X-CC-Version' => SELF::$API_VERSION,
-                        'X-CC-Api-Key' => SELF::$API_KEY];
-            
-            return array_merge($headers,$additional_headers);
+                        'X-CC-Version' => config('coinbase.COINBASE_API_VERSION'),
+                        'X-CC-Api-Key' => config('coinbase.COINBASE_API_KEY')];
 
+            return array_merge($headers,$additional_headers);
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -69,7 +53,7 @@ class CoinBaseClient{
         try {
             $statusCode = $response->status();
             if($statusCode !== 200 && $statusCode !== 201){
-                $message = ($statusCode == 404) ? 'Invalid coinbase api' : '';
+                $message = ($statusCode == 404) ? 'Invalid coinbase api' : (!empty($response->getReasonPhrase()) ? 'Coinbase : '.$response->getReasonPhrase() : '');
                 return Helpers::response($statusCode,$message);
             }
             return ['code'=>200,'error'=>false,'messge'=>'Coinbase response','data'=>$response->json()];
@@ -80,27 +64,24 @@ class CoinBaseClient{
 
     protected static function Execute($TYPE,$API='',$REQUEST_BODY=[],$HEADERS=[]){
         try {
-            $TYPE = strtolower($TYPE);
-            if(!in_array($TYPE,['get','post','put','delete'])){
-                return Helpers::response(422,'invalid request for api execute');
-            }
 
             $API_URL     = SELF::COINBASE_API($API);
             $HTTP        = HTTP::withHeaders(SELF::GET_HEADERS($HEADERS));
-            switch ($TYPE) {
-                case 'post':
+            switch (strtoupper($TYPE)) {
+                case 'GET':
+                    $response = SELF::GET_REQUEST($HTTP,$API_URL);
+                    break;
+                case 'POST':
                     $response = SELF::POST_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
                     break;
-                case 'put':
+                case 'PUT':
                     $response = SELF::POST_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
                     break;
-                case 'delete':
+                case 'DELETE':
                     $response = SELF::POST_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
                     break;
                 default:
-                    # GET REQUEST
-                    $response = SELF::GET_REQUEST($HTTP,$API_URL);
-                    break;
+                    return Helpers::response(422,'invalid request for api execute');
             }
             
             return SELF::FORMAT_RESPONSE($response);
