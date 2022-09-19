@@ -2,6 +2,7 @@
 
 namespace Jeybin\Coinbase;
 
+use Jeybin\Coinbase\Controllers\CoinbaseCheckoutController;
 use Jeybin\Coinbase\Controllers\CoinbaseChargesController;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,6 @@ class Coinbase {
      */
     public function CreateCharge(Request $request){
         try {
-
             return CoinbaseChargesController::createCharge($request);
         } catch (\Throwable $th) {
             throw $th;
@@ -81,6 +81,41 @@ class Coinbase {
             }
 
             return ['code'=>200,'data'=>end($chargeDetails['data']['timeline'])['status'],'message'=>'status'];
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+
+    public function createCheckout(Request $request){
+        try {
+            return CoinbaseCheckoutController::createCheckout($request);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function showCheckout(string $checkoutId){
+        try {
+            return CoinbaseCheckoutController::showCheckout($checkoutId);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function updateCheckout(string $checkoutId){
+        try {
+            return CoinbaseCheckoutController::updateCheckout($checkoutId);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    public function deleteCheckout(string $checkoutId){
+        try {
+            return CoinbaseCheckoutController::deleteCheckout($checkoutId);
         } catch (\Throwable $th) {
             throw $th;
         }

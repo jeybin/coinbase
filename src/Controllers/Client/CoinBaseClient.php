@@ -49,11 +49,28 @@ class CoinBaseClient{
     }
 
 
+    private static function PUT_REQUEST($HTTP, $API, $BODY=[]){
+        try {
+            return $HTTP->put($API,$BODY);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    private static function DELETE_REQUEST($HTTP, $API, $BODY=[]){
+        try {
+            return $HTTP->delete($API,$BODY);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
     private static function FORMAT_RESPONSE($response){
         try {
             $statusCode = $response->status();
             if($statusCode !== 200 && $statusCode !== 201){
-                $message = ($statusCode == 404) ? 'Invalid coinbase api' : (!empty($response->getReasonPhrase()) ? 'Coinbase : '.$response->getReasonPhrase() : '');
+                $message = ($statusCode == 404) ? 'Not found' : (!empty($response->getReasonPhrase()) ? 'Coinbase : '.$response->getReasonPhrase() : '');
                 return Helpers::response($statusCode,$message);
             }
             return ['code'=>200,'error'=>false,'messge'=>'Coinbase response','data'=>$response->json()];
@@ -75,10 +92,10 @@ class CoinBaseClient{
                     $response = SELF::POST_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
                     break;
                 case 'PUT':
-                    $response = SELF::POST_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
+                    $response = SELF::PUT_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
                     break;
                 case 'DELETE':
-                    $response = SELF::POST_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
+                    $response = SELF::DELETE_REQUEST($HTTP,$API_URL,$REQUEST_BODY);
                     break;
                 default:
                     return Helpers::response(422,'invalid request for api execute');
