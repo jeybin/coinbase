@@ -2,9 +2,11 @@
 
 namespace Jeybin\Coinbase;
 
-use Jeybin\Coinbase\Controllers\CoinbaseCheckoutController;
-use Jeybin\Coinbase\Controllers\CoinbaseChargesController;
 use Illuminate\Http\Request;
+use Jeybin\Coinbase\Controllers\CoinbaseEventsController;
+use Jeybin\Coinbase\Controllers\CoinbaseChargesController;
+use Jeybin\Coinbase\Controllers\CoinbaseInvoiceController;
+use Jeybin\Coinbase\Controllers\CoinbaseCheckoutController;
 
 class Coinbase {
 
@@ -86,7 +88,13 @@ class Coinbase {
         }
     }
 
-
+    /***
+     * Checkout functions
+     * -> Create checkout
+     * -> Update checkout
+     * -> Read checkout
+     * -> Delete checkout
+     */
 
     public function createCheckout(Request $request){
         try {
@@ -116,6 +124,44 @@ class Coinbase {
     public function deleteCheckout(string $checkoutId){
         try {
             return CoinbaseCheckoutController::deleteCheckout($checkoutId);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    /**
+     * Events
+     */
+    public function listEvents($eventId=''){
+        try {
+            return (empty($eventId)) ? CoinbaseEventsController::listEvents()
+                                     : CoinbaseEventsController::eventById($eventId);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    public function CreateInvoice(Request $request){
+        try {
+            return CoinbaseInvoiceController::CreateInvoice($request);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function invoices($invoiceId=''){
+        try {
+            return CoinbaseInvoiceController::invoices($invoiceId);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+    public function ChangeInvoiceStatus(string $invoiceId,string $type){
+        try {
+            return CoinbaseInvoiceController::changeInvoiceStatus($invoiceId,$type);
         } catch (\Throwable $th) {
             throw $th;
         }

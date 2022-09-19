@@ -12,9 +12,13 @@ use Jeybin\Coinbase\Controllers\Client\CoinBaseClient;
  * Coinbase provide with a hosted page to show the user
  *  to complete the payment. 
  */
-class CoinBaseChargeClient extends CoinBaseClient{
+class ChargesClient extends CoinBaseClient{
     
+    private static $API_PATH = 'charges';
 
+    private static function API($path=''){
+        return (!empty($path)) ? self::$API_PATH.'/'.$path : self::$API_PATH;
+    }
     /**
      * Create a charge for the payment
      *
@@ -23,7 +27,7 @@ class CoinBaseChargeClient extends CoinBaseClient{
      */
     public static function CreateCharge(array $request){
         try {
-            return CoinBaseClient::Execute('POST','charges',$request);
+            return CoinBaseClient::Execute('POST',self::API(),$request);
         } catch (Throwable $th) {
             throw $th;
         }
@@ -35,7 +39,7 @@ class CoinBaseChargeClient extends CoinBaseClient{
      */
     public static function ChargesList(){
         try {
-            return CoinBaseClient::Execute('GET','charges');
+            return CoinBaseClient::Execute('GET',self::API());
         } catch (Throwable $th) {
             throw $th;
         }
@@ -48,7 +52,7 @@ class CoinBaseChargeClient extends CoinBaseClient{
      */
     public static function ChargeById($chargeId){
         try {
-            return CoinBaseClient::Execute("GET","charges/$chargeId");
+            return CoinBaseClient::Execute("GET",self::API($chargeId));
         } catch (Throwable $th) {
             throw $th;
         }
@@ -60,7 +64,7 @@ class CoinBaseChargeClient extends CoinBaseClient{
      */
     public static function CancelCharge($chargeId){
         try {
-            return CoinBaseClient::Execute("POST","charges/$chargeId/cancel");
+            return CoinBaseClient::Execute("POST",self::API($chargeId.'/cancel'));
         } catch (Throwable $th) {
             throw $th;
         }

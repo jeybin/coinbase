@@ -4,11 +4,9 @@ namespace Jeybin\Coinbase\Controllers;
 
 use Throwable;
 use Illuminate\Http\Request;
-// use Jeybin\Coinbase\Requests\PaymentLinkValidator;
 use Jeybin\Coinbase\Helpers\Helpers;
 use Illuminate\Support\Facades\Validator;
-use Jeybin\Coinbase\Controllers\Client\CoinBaseClient;
-use Jeybin\Coinbase\Controllers\Client\CoinBaseChargeClient;
+use Jeybin\Coinbase\Controllers\Client\ChargesClient;
 
 class CoinbaseChargesController{
     
@@ -62,7 +60,7 @@ class CoinbaseChargesController{
             $chargerequestArr['redirect_url']               = $requestArr['redirect_url'];
             $chargerequestArr['cancel_url']                 = $requestArr['cancel_url'];
 
-            return CoinBaseController::FormatResponse(CoinBaseChargeClient::CreateCharge($chargerequestArr));
+            return CoinBaseController::FormatResponse(ChargesClient::CreateCharge($chargerequestArr));
 
         } catch (\Throwable $th) {
             throw $th;
@@ -77,7 +75,7 @@ class CoinbaseChargesController{
      */
      public function chargeDetails(string $chargeId){
         try {
-            return CoinBaseController::FormatResponse(CoinBaseChargeClient::ChargeById($chargeId));
+            return CoinBaseController::FormatResponse(ChargesClient::ChargeById($chargeId));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -91,7 +89,7 @@ class CoinbaseChargesController{
      */
     public function cancelCharge(string $chargeId){
         try {
-            return CoinBaseController::FormatResponse(CoinBaseChargeClient::CancelCharge($chargeId));
+            return CoinBaseController::FormatResponse(ChargesClient::CancelCharge($chargeId));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -102,7 +100,7 @@ class CoinbaseChargesController{
 
     public static function chargeList(){
         try {
-            return CoinBaseController::FormatResponse(CoinBaseChargeClient::ChargesList());
+            return CoinBaseController::FormatResponse(ChargesClient::ChargesList());
         } catch (Throwable $th) {
             throw $th;
         }

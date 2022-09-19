@@ -6,8 +6,7 @@ use Throwable;
 use Illuminate\Http\Request;
 use Jeybin\Coinbase\Helpers\Helpers;
 use Illuminate\Support\Facades\Validator;
-use Jeybin\Coinbase\Controllers\Client\CoinBaseClient;
-use Jeybin\Coinbase\Controllers\Client\CoinBaseCheckoutClient;
+use Jeybin\Coinbase\Controllers\Client\CheckoutClient;
 
 class CoinbaseCheckoutController{
 
@@ -27,7 +26,7 @@ class CoinbaseCheckoutController{
             }
             $requestArr = $request->all();
             $requestArr['local_price']['amount'] = $requestArr['local_price']['amount'] + ($requestArr['local_price']['amount'] * 0.01);
-            return CoinBaseController::FormatResponse(CoinBaseCheckoutClient::CreateCheckout($requestArr));
+            return CoinBaseController::FormatResponse(CheckoutClient::CreateCheckout($requestArr));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -35,7 +34,7 @@ class CoinbaseCheckoutController{
 
     public function showCheckout(string $checkoutId){
         try {
-            return CoinBaseController::FormatResponse(CoinBaseCheckoutClient::ShowCheckout($checkoutId));
+            return CoinBaseController::FormatResponse(CheckoutClient::ShowCheckout($checkoutId));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -48,7 +47,7 @@ class CoinbaseCheckoutController{
             $data['requested_info'] = ['name','email'];
             $data['pricing_type'] = 'fixed_price';
             $data['local_price'] = ['amount'=>'100','currency'=>'AED'];
-            return CoinBaseController::FormatResponse(CoinBaseCheckoutClient::UpdateCheckout($checkoutId,$data));
+            return CoinBaseController::FormatResponse(CheckoutClient::UpdateCheckout($checkoutId,$data));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -56,7 +55,7 @@ class CoinbaseCheckoutController{
 
     public function deleteCheckout(string $checkoutId){
         try {
-            return CoinBaseController::FormatResponse(CoinBaseCheckoutClient::DeleteCheckout($checkoutId));
+            return CoinBaseController::FormatResponse(CheckoutClient::DeleteCheckout($checkoutId));
         } catch (\Throwable $th) {
             throw $th;
         }
